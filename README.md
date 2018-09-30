@@ -9,5 +9,5 @@ Team Member:
 | Yijun Li | 516030910395 | Omega |
 | JinFeng Liu | 516030910237 | Sigma |
 | Yifan Song | 516030910411 | Apollo |
-|          |              |       |
-|          |              |       |
+| Ruiyang Jin | 516030910408 | Borg |
+| Ruizhe Tong | 516030910193 | Kubernetes |
