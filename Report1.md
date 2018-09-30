@@ -12,7 +12,7 @@
 
 ### 简述
 
-Sigma是阿里巴巴公司的在线任务调度器，与之相对的还有离线任务调度器Fuxi。Sigma可以抢占资源，分配资源给在线任务。任务部署使用PouchContainer。
+Sigma是阿里巴巴公司的在线任务调度器，与之相对的还有离线任务调度器Fuxi。Sigma可以抢占资源，分配资源给在线任务。任务部署使用PouchContainer。
 
 ### 特性
 
@@ -36,7 +36,7 @@
 
 ### 优缺点
 
-我认为一些架构是设计者根据需要作出的选择，单纯看Sigma一个方案，不太好说有什么优缺点，所以我会用一些比较来说明。另外还会有一些共同的，等待解决的问题。
+我认为一些架构是设计者根据需要作出的选择，单纯看Sigma一个方案，不太好说有什么优缺点，所以我会用一些比较来说明。另外还会有一些共同的，等待解决的问题。
 
 - Kubernetes
   - K8s较为新颖，未经过太多实践验证，可调度节点数在一万以下。Sigma掌控节点数可达数十万级别。
@@ -50,9 +50,9 @@
 - Mesos
   - Mesos支持十万级别节点的调度方案。
   - 两层调度，支持多种调度框架。
-  - Mesos的隔离性要差很多，引入了Docker后要好一点，但还是比不上Pouch。
+  - Mesos的隔离性要差很多，引入了Docker后要好一点，但还是比不上Pouch。
 - 难题
-  - 谷歌工程师在 [Borg,Omega, and Kubernetes：Lessons learned from three container-management systems over a decade](https://queue.acm.org/detail.cfm?id=2898444) 中提出了一些问题。
+  - 谷歌工程师在 [Borg,Omega, and Kubernetes：Lessons learned from three container-management systems over a decade](https://queue.acm.org/detail.cfm?id=2898444)中提出了一些问题。
   - 配置。不论是关于容器的配置还是应用程序的配置，一个可靠的配置管理并不容易。
   - 依赖条件管理，即不仅管理部署的应用，还能管理与它相关联的应用，比如监控、存储。
   - 并未听说Sigma有解决这些问题。
@@ -62,6 +62,71 @@
 - Sigma是一个优秀的项目，它帮助阿里实现了容器化迁移，提升资源利用率（日均cpu利用率从10%变为40%），节约了成本。
 
 - Sigma始终是一个闭源的项目，我觉得它应该对标谷歌的Borg，但现在谷歌已经到了下一代项目kubernetes。听说阿里也会积极参与，最终应该会有一个更好的解决方案，在线离线统一调度将会进一步加强资源利用。
+
+
+## Kubernetes
+
+### 简述
+
+Kubernetes是一个可移植，可扩展的开源平台，用于管理容器化工作负载和服务，有助于声明性配置和自动化。它拥有庞大，快速发展的生态系统。 Kubernetes服务，支持和工具广泛可用。
+谷歌在2014年开放了Kubernetes项目.Kubernetes建立在谷歌大规模运行生产工作量的十五年经验基础上，结合了社区中最佳的创意和实践。
+
+## 用Kubernetes可以干什么
+
+- 自动化容器的部署和复制
+- 随时扩展或收缩容器规模
+- 将容器组织成组，并且提供容器间的负载均衡
+- 很容易地升级应用程序容器的新版本
+- 提供容器弹性，如果容器失效就替换它，等等...
+
+### Kubernetes的优势
+
+Kubenetes拥有大量的优势，要牢记，**它是一个平台***，它可以被认为是
+ 
+- 一个容器平台
+- 一个微服务平台
+- 一个可移植的云计算平台(and a lot more)
+
+Kubernetes提供以容器为中心的管理环境。它代表用户工作负载协调计算，网络和存储基础架构。这提供了平台即服务（PaaS）的大部分简单性，具有基础架构即服务（IaaS）的灵活性，并支持跨基础架构提供商的可移植性。
+
+### Kubernetes架构
+
+![avatar](http://dockone.io/uploads/article/20151230/d56441427680948fb56a00af57bda690.png)
+#### 其中的组成部分有：
+
+- Pod：Pod（上图绿色方框）安排在节点上，包含一组容器和卷。同一个Pod里的容器共享同一个网络命名空间，可以使用localhost互相通信。Pod是短暂的，不是持续性实体。
+- Container（容器）
+- Label(label)（标签）：正如图所示，一些Pod有Label（enter image description here）。一个Label是attach到Pod的一对键/值对，用来传递用户定义的属性。
+- Replication Controller（复制控制器）：Replication Controller确保任意时间都有指定数量的Pod“副本”在运行。如果为某个Pod创建了Replication Controller并且指定3个副本，它会创建3个Pod，并且持续监控它们。如果某个Pod不响应，那么Replication Controller会替换它，保持总数为3.
+- Service（enter image description here）（服务）
+- Node（节点）
+- Kubernetes Master（Kubernetes主节点）
+
+### 关于Kubernetes要澄清的事实
+
+Kubernetes不是一个传统的，包罗万象的PaaS（平台即服务）系统。由于Kubernetes在容器级而非硬件级运行，因此它提供了PaaS产品常用的一些通用功能，例如部署，扩展，负载平衡，日志记录和监控。但是，Kubernetes不是单片，而且这些默认解决方案是可选的和可插拔的。 Kubernetes提供了构建开发人员平台的构建块，但在重要的地方保留了用户选择和灵活性。
+Kubernetes:
+
+- 不限制支持的应用程序类型。 
+- 不部署源代码并且不构建应用程序。持续集成，交付和部署（CI / CD）工作流程由组织文化和偏好以及技术要求决定。
+- 不提供应用程序级服务，例如中间件（例如，消息总线），数据处理框架（例如，Spark），数据库（例如，mysql），高速缓存，也不提供集群存储系统（例如，Ceph）。在服务中。这些组件可以在Kubernetes上运行，和/或可以通过便携式机制（例如Open Service Broker）在Kubernetes上运行的应用程序访问。
+- 不指示记录，监视或警报解决方案。
+- 不提供或授权配置语言/系统（例如，jsonnet）。它提供了一个声明性API，可以通过任意形式的声明性规范来实现。
+- 不提供或采用任何全面的机器配置，维护，管理或自我修复系统。
+
+### Kubernetes和另一个集群管理平台Mesos的对比
+
+|  | Kubernetes | Mesos |
+| :------| :------ | :------ |
+| 工作负载 | Cloud Native applications | Support for diverse kinds of workloads such as big data, cloud native apps etc. |
+| 服务发现 | Pod使用群集内DNS发现服务 | 容器可以使用DNS或反向代理发现服务。 |
+|  负载均衡 |  Pod通过服务公开，服务可以是负载均衡器。 |可以通过Mesos-DNS访问应用程序，它可以充当基本的负载均衡器。|
+| 应用程序扩展性建设|每个应用程序层都定义为一个pod，可以在部署或复制控制器管理时进行扩展。缩放可以是手动或自动的。|可以扩展单个组，其树中的依赖项也可以缩放。|
+
+### Kubernetes的未来： Severless
+Azure Container Instances等无服务器容器基础架构是原始基础架构。虽然这是轻松运行几个容器的好方法，但构建复杂的系统需要开发一个协调器来引入更高级别的概念，如服务，部署，秘密等。
+对于这些无服务器平台，开发一个全新的协调器可能很诱人，但事实是世界正在围绕Kubernetes编排API进行整合，与现有Kubernetes工具无缝集成的价值非常诱人。此外，在可预见的未来，我预计大多数人的Kubernetes集群将成为专用机器和无服务器容器基础设施之间的混合体。专用机器将用于具有相对静态使用的稳态服务，或专用专用硬件（如FPGA或GPU），而无服务器容器将用于突发或瞬态工作负载。
+***Kubernetes旨在为开发人员提供一个干净的，面向应用程序的API，使他们能够忘记机器和机器管理的细节。但事实是，在API表面下，机器仍在那里。无服务器容器基础架构的开发使人们开始完全忘记机器，但是对于大规模应用程序成功使用无服务器容器需要开发协调器。因此，Kubernetes业务流程层和无服务器容器基础架构的集成对于Kubernetes和无服务器基础架构的未来成功至关重要。***
 
 ## Omega
 
@@ -90,3 +155,4 @@ Omega是谷歌第三代集群管理系统，集群管理系统经历了从中央
 ### 评价
 
  omega解决了mesos中framework无法了解全局资源状态从而无法优化的问题，大大提高了并发性。
+
