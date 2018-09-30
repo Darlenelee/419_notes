@@ -64,6 +64,7 @@ Sigma是阿里巴巴公司的在线任务调度器，与之相对的还有离线
 - Sigma始终是一个闭源的项目，我觉得它应该对标谷歌的Borg，但现在谷歌已经到了下一代项目kubernetes。听说阿里也会积极参与，最终应该会有一个更好的解决方案，在线离线统一调度将会进一步加强资源利用。
 
 
+
 ## Kubernetes
 
 ### 简述
@@ -202,7 +203,6 @@ Borg是Google公司的集群管理器，它同时管理着很多个应用集群�
 [深度译文｜Google的大规模集群管理系统Borg](https://blog.csdn.net/karamos/article/details/80128781)
 
 
----
 
 # Apollo
 ### ——a highly scalable and coordinated scheduling framework
