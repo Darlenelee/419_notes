@@ -234,3 +234,98 @@ Wikipedia，Baidupedia
 [5]: http://5b0988e595225.cdn.sohucs.com/images/20171028/947a5391ed5e417587395e1d08104a10.jpeg
 [6]: http://5b0988e595225.cdn.sohucs.com/images/20171028/cc49dbed99cf40238ba6f5b66dcdfeb4.jpeg
 
+# Storage(Ceph)
+
+![Logo](http://docs.ceph.com/docs/master/_static/logo.png)
+
+使用Ceph系统可以提供对象存储、块设备存储和文件系统服务，
+
+基于Ceph的key-value存储和NoSQL存储也在开发中，让Ceph成为目前最流行的统一存储系统。
+
+Ceph底层提供了分布式的RADOS存储，用与支撑上层的librados和RGW、RBD、CephFS等服务。Ceph实现了非常底层的object storage，是纯粹的SDS，并且支持通用的ZFS、BtrFS和Ext4文件系统，能轻易得Scale，没有单点故障。
+
+把一份数据存储到一群server里：先计算Placement Group再计算OSD(Object Storage Device)
+
+
+
+## Feature
+
+1. 保存一个对象的过程——先构建了一个**逻辑层**，也就是池(pool)，用于保存对象。再将一个pool划分为若干的PG(归置组 Placement Group)。对对象名进行HASH后，存入PG。实际上，存在着多个pool，PG的实际编号就由`pool_id+.+PG_id`组成。**物理层**由若干的OSD组成，用CRUSH做映射。
+
+1. CRUSH: Controlled Replication Under Scalable Hashing。计算PG->OSD的映射关系
+
+   - 给出一个PG_ID，作为CRUSH_HASH的输入。
+   - CRUSH_HASH(PG_ID, OSD_ID, r) 得出一个随机数(重点是随机数，不是HASH)。
+   - 对于所有的OSD用他们的权重乘以每个OSD_ID对应的随机数，得到乘积。
+   - 选出乘积最大的OSD。
+   - 这个PG就会保存到这个OSD上。
+
+   ![crush_algo](/Users/darlenelee/Documents/sjtu18/SE419/419_notes/Image/crush_algo.png)
+
+2. RADOS
+
+   Ceph的底层，本身也是分布式存储系统，CEPH所有的存储功能都是基于RADOS实现。
+
+   RADOS采用C++开发，所提供的原生Librados API包括C和C++两种。Ceph的上层应用调用本机上的librados API，再由后者通过socket与RADOS集群中的其他节点通信并完成各种操作。
+
+   ![rados](/Users/darlenelee/Documents/sjtu18/SE419/419_notes/Image/rados.png)
+
+3. CephFS
+
+   POSIX 兼容的文件系统，使用 Ceph 存储集群来存储数据。 
+
+   Ceph 文件系统与 Ceph 块设备、同时提供 S3 和 Swift API 的 Ceph 对象存储、或者原生库（ librados ）一样，都使用着相同的 Ceph 存储集群系统。
+
+   当前， CephFS 还缺乏健壮得像 ‘fsck’ 这样的检查和修复功能。存储重要数据时需小心使用，因为灾难恢复工具还没开发完。
+
+   ![img](http://docs.ceph.org.cn/_images/ditaa-b5a320fc160057a1a7da010b4215489fa66de242.png)
+
+## Pro
+
+1. 开源系统，免费，初始成本低；
+2. 统一存储架构(Block/File/Object)，存储特性丰富；
+3. 设计理念先进，CRUSH算法和元数据动态子树分区；
+4. 扩展性、安全性好，多个服务器保存副本；
+5. 不存在单点故障和瓶颈；
+
+## Con
+
+1. 后期运维成本高；
+2. 系统成熟度不够，生产环境具有一定的风险；
+
+## Key indicator
+
+测试方法：
+
+> 找到 osd 的挂载盘  `lsblk -f`
+>
+> 测试集群内各节点间的网络IO `nc -v -l -n 17480 > /dev/null`
+>
+> 测试rados集群的性能
+>
+> 查看该池占用的资源 `rados -p benchmark df`
+>
+> 测试写性能 `rados bench -p benchmark 60  write`
+>
+> 测试读性能 `rados bench -p benchmark 60 [ seq | rand ]`
+
+## Comment
+
+​	Ceph由Sage Weil设计与发布，是一个分布式的、可扩展的、可靠性好的存储系统平台。其论文《CEPH: RELIABLE, SCALABLE, AND HIGH-PERFORMANCE DISTRIBUTED STORAGE》内容翔实，又被整理为三篇规模较小的论文分述三个部分，读来让人甚是头疼，因此借鉴了许多现有博客文章。Ceph整合对象存储，块存储和文件系统在一个系统中。通过逻辑层和物理层，使用CRUSH这个伪随机分布算法实现抽签安排功能，任何组件都可以独立找到每个对象的位置；只需要很少的metadata（cluster map）。Ceph相比其他分布式文件系统，设计理念更先进，但不够成熟、投入工业应用仍有风险。
+
+Reference: 
+
+http://docs.ceph.com/docs/master/#
+
+https://ivanzz1001.github.io/records/post/ceph/2017/07/28/ceph-benchmark
+
+https://ceph.com/ceph-storage/
+
+https://tobegit3hub1.gitbooks.io/ceph_from_scratch/
+
+https://www.zhihu.com/question/21718731
+
+http://www.oschina.net/translate/crush-controlled-scalable-decentralized-placement-of-replicated-data?cmp&p=2#
+
+https://www.cnblogs.com/chenxianpao/p/5568207.html
+
