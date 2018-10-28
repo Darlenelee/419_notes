@@ -1,4 +1,4 @@
-﻿# xPU Report#
+﻿# xPU Report #
 
 现如今， 各种计算单元层出不穷，他们大多都以xPU（Processing unit）的方式命名，其中除了最为我们所熟知的CPU与GPU之外，还有 TPU, NPU，DPU等等，我们下面就分别来简单报告一下它们的具体情况。
 
