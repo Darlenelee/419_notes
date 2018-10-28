@@ -195,15 +195,17 @@ WPU -- Wearable Processing Unit， 可穿戴处理器，Ineda Systems公司推�
 XPU -- 百度与Xilinx公司在2017年Hotchips大会上发布的FPGA智能云加速，含256核。
 
 ZPU -- Zylin Processing Unit, 由挪威Zylin 公司推出的一款32位开源处理器。
-
-  [1]: http://5b0988e595225.cdn.sohucs.com/images/20171028/e664ed39638648469655f0fefe19f731.png
-  [2]: http://5b0988e595225.cdn.sohucs.com/images/20171028/636a564e61c140bbbf2826cc9cbca527.jpeg
-  [3]: http://5b0988e595225.cdn.sohucs.com/images/20171028/e7ac26fc862a469983022f5078cf4bbb.png
-  [4]: http://5b0988e595225.cdn.sohucs.com/images/20171028/1b9a0bc769184d02b5e29822b56bc8ea.jpeg
-  [5]: http://5b0988e595225.cdn.sohucs.com/images/20171028/947a5391ed5e417587395e1d08104a10.jpeg
-  [6]: http://5b0988e595225.cdn.sohucs.com/images/20171028/cc49dbed99cf40238ba6f5b66dcdfeb4.jpeg
 ---
 ### 参考资料： ###
 http://news.ifeng.com/a/20170830/51808889_0.shtml
 https://www.sohu.com/a/200698604_160923
 Wikipedia，Baidupedia
+
+
+[1]: http://5b0988e595225.cdn.sohucs.com/images/20171028/e664ed39638648469655f0fefe19f731.png
+[2]: http://5b0988e595225.cdn.sohucs.com/images/20171028/636a564e61c140bbbf2826cc9cbca527.jpeg
+[3]: http://5b0988e595225.cdn.sohucs.com/images/20171028/e7ac26fc862a469983022f5078cf4bbb.png
+[4]: http://5b0988e595225.cdn.sohucs.com/images/20171028/1b9a0bc769184d02b5e29822b56bc8ea.jpeg
+[5]: http://5b0988e595225.cdn.sohucs.com/images/20171028/947a5391ed5e417587395e1d08104a10.jpeg
+[6]: http://5b0988e595225.cdn.sohucs.com/images/20171028/cc49dbed99cf40238ba6f5b66dcdfeb4.jpeg
+
