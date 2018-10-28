@@ -211,6 +211,7 @@ WPU -- Wearable Processing Unit， 可穿戴处理器，Ineda Systems公司推�
 XPU -- 百度与Xilinx公司在2017年Hotchips大会上发布的FPGA智能云加速，含256核。
 
 ZPU -- Zylin Processing Unit, 由挪威Zylin 公司推出的一款32位开源处理器。
+
 ---
 
 ### 总结 ###
