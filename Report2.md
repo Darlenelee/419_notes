@@ -364,10 +364,10 @@ Wikipedia，Baidupedia
 
 wikipedia, baidubaike
 
-[7]:http://www.shartu.com/network/204.html
+[7]:http://uploads.xuexila.com/allimg/1604/766-1604200U331217.jpg
 [8]:https://i2.wp.com/www.apposite-tech.com/blog/wp-content/uploads/2017/09/LAN-MAN-WAN.jpg
 [9]:http://www.brainbell.com/tutorials/Networking/images/01fig02.gif
-[10]:https://afinde-production.s3.amazonaws.com/uploads/323d7813-06c7-4aca-b246-3ebe59c6a097.jpg
+[10]:http://www.iyunying.org/wp-content/uploads/2015/12/a3fed0c9d90cdeb9a1bac41f828885e6.jpg
 
 # Storage(Ceph)
 
