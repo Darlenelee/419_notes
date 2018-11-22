@@ -151,6 +151,7 @@ Bolt处理输入的Stream，并产生新的输出Stream。Bolt可以执行过滤
 spout和bolt所组成一个网络会被打包成topology， topology是storm里面最高一级的抽象（类似 Job）， 你可以把topology提交给storm的集群来运行。topology的结构在Topology那一段已经说过了，这里就不再赘述了。
 
 ![此处输入图片的描述][3]
+
 topology结构
 
 topology里面的每一个节点都是并行运行的。 在你的topology里面， 你可以指定每个节点的并行度， storm则会在集群里面分配那么多线程来同时计算。
@@ -163,6 +164,7 @@ topology里面的每一个节点都是并行运行的。 在你的topology里面
 ![此处输入图片的描述][4]
 
 下图是Storm的数据交互图。可以看出两个模块Nimbus和Supervisor之间没有直接交互。状态都是保存在Zookeeper上。Worker之间通过ZeroMQ传送数据。
+
 ![此处输入图片的描述][5]
 
 ### Storm集群运行机制
