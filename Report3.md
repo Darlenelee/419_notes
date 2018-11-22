@@ -118,30 +118,30 @@ Storm的集群表面上看和hadoop的集群非常像。但是在Hadoop上面你
 
 ### Storm角色
 
-主节点：Nimbus
+- 主节点：Nimbus
 
-从节点：Supervisor
+- 从节点：Supervisor
 
 ### Storm基本概念
 
-Nimbus：主节点
+- Nimbus：主节点
 
-Supervisor：从节点
+- Supervisor：从节点
 
-Worker：任务工作进程，类似于YARN的ApplicationMaster，可以存在多个，不同的任务有不同的Worker
+- Worker：任务工作进程，类似于YARN的ApplicationMaster，可以存在多个，不同的任务有不同的Worker
 
-Executor：Worker进程在执行任务时，会启动多个Executor现成
+- Executor：Worker进程在执行任务时，会启动多个Executor现成
 
-Stream：Stream是storm里面的关键抽象。一个stream是一个没有边界的tuple序列。
+- Stream：Stream是storm里面的关键抽象。一个stream是一个没有边界的tuple序列。
 
-Spout：抽取数据并将数据进行分发的阶段
+- Spout：抽取数据并将数据进行分发的阶段
 
-Bolt：将分发的数据进行具体操作的阶段
+- Bolt：将分发的数据进行具体操作的阶段
 
-Topology：task任务的拓扑结构，是一个DAG有向无环图
+- Topology：task任务的拓扑结构，是一个DAG有向无环图
 解释：为了在storm上面做实时计算， 你要去建立一些topologies。一个topology就是一个计算节点所组成的图。Topology里面的每个处理节点都包含处理逻辑， 而节点之间的连接则表示数据流动的方向。
 
-Stream/Spout/Bolt/Topology详细解释：
+- Stream/Spout/Bolt/Topology详细解释：
 
 storm提供一些原语来分布式地、可靠地把一个stream传输进一个新的stream。比如： 你可以把一个tweets流传输到热门话题的流。
 storm提供的最基本的处理stream的原语是spout和bolt。你可以实现Spout和Bolt对应的接口以处理你的应用的逻辑。
@@ -174,15 +174,15 @@ topology里面的每一个节点都是并行运行的。 在你的topology里面
 
 ### Storm集群运行机制
 
-主节点Nimbus
+- 主节点Nimbus
 
 管理所有从节点supervisor，当主节点nimbus启动后会定时向zookeeper集群发送自己的当前状态信息，同时也可以获取所有从节点Supervisor的状态信息
 
-从节点Supervisor
+- 从节点Supervisor
 
 定时向zookeeper集群汇报自己的状态信息，同时接受主节点Nimbus派发过来的任务。
 
-Zookeeper的作用
+- Zookeeper的作用
 
 Storm的所有节点的状态信息都保存在zookeeper当中，如果有某个节点挂掉了，只需要启动一个新的节点来替代即可，新的节点启动后，会自动从zookeeper中读取之前的状态信息，然后恢复到该状态下。同时也不必担心task任务意外终止，因为可以通过zookeeper来恢复该任务，也就是重启挂掉的task。nimbus和supervisor之间的状态同步全部依赖zookeeper来实现
 
