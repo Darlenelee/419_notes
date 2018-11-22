@@ -94,8 +94,6 @@
 ---
 # Stream Computing framework Report —— Storm & Spark
 
----
-
 ## Storm
 
 ### Storm简介
@@ -174,7 +172,7 @@ topology里面的每一个节点都是并行运行的。 在你的topology里面
 下图是Storm的数据交互图。可以看出两个模块Nimbus和Supervisor之间没有直接交互。状态都是保存在Zookeeper上。Worker之间通过ZeroMQ传送数据。
 ![此处输入图片的描述][5]
 
-###Storm集群运行机制
+### Storm集群运行机制
 
 主节点Nimbus
 
