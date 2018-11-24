@@ -208,10 +208,63 @@ Storm集群配置结构如下图所示。
 
 ![此处输入图片的描述][6]
 
+### spark
+### 简介
+Apache Spark是专为大规模数据处理而设计的快速通用的计算引擎。Spark是UC Berkeley AMP lab (加州大学伯克利分校的AMP实验室)所开源的类Hadoop MapReduce的通用并行框架。Spark是一个用来实现快速而通用的集群计算的平台。扩展了广泛使用的MapReduce计算模型，而且高效地支持更多的计算模式，包括交互式查询和流处理。在处理大规模数据集的时候，速度是非常重要的。Spark的一个重要特点就是能够在内存中计算，因而更快。即使在磁盘上进行的复杂计算，Spark依然比MapReduce更加高效。
+### 基本概念与原理
+一个完整的Spark应用程序在提交集群运行时，涉及到如下图所示的组件：
 
- 参考资料：
+![spark应用程序示意图](https://img-blog.csdn.net/20150920083018462)
+
+各Spark应用程序以相互独立的进程集合运行于集群之上，由SparkContext对象进行协调。SparkContext对象可以视为Spark应用程序的入口，被称为driver program。SparkContext可以与不同种类的集群资源管理器(Cluster Manager），例如Hadoop Yarn、Mesos等进行通信，从而分配到程序运行所需的资源。获取到集群运行所需的资源后，SparkContext将得到集群中其它工作节点（Worker Node） 上对应的Executors （不同的Spark应用程序有不同的Executor，它们之间也是独立的进程，Executor为应用程序提供分布式计算及数据存储功能）。之后SparkContext将应用程序代码分发到各Executors，最后将任务（Task）分配给executors执行。
+
+- Application（Spark应用程序）：运行于Spark上的用户程序，由集群上的一个driver program（包含SparkContext对象）和多个executor线程组成
+- Application jar（Spark应用程序JAR包）：包含用户Spark应用程序的jar包
+- Driver program：包含main方法的程序，负责创建SparkContext对象
+- Cluster manager：集群资源管理器，例如Mesos，Hadoop Yarn
+- Deploy mode：部署模式，用于区别driver program的运行方式
+    - 集群模式(cluter mode)，driver在集群内部启动
+    - 客户端模式（client mode），driver进程从集群外部启动
+- Worker node：工作节点，集群中可以运行Spark应用程序的节点
+- Executor：Worker node上的进程，该进程用于执行具体的Spark应用程序任务，负责任务间的数据维护（数据在内存中或磁盘上)。不同的Spark应用程序有不同的Executor
+- Task：运行于Executor中的任务单元，Spark应用程序最终被划分为经过优化后的多个任务的集合
+- Job：由多个任务构建的并行计算任务，具体为Spark中的action操作，如collect,save等
+- Stage：每个job将被拆分为更小的task集合，这些任务集合被称为stage，各stage相互独立（类似于MapReduce中的map stage和reduce stage），由于它由多个task集合构成，因此也称为TaskSet
+### Spark RDD
+RDD是Spark的基本抽象，是一个弹性分布式数据集，代表着不可变的，分区（partition）的集合，能够进行并行计算。也即是说它是一系列的分片、比如说128M一片，类似于Hadoop的split；在每个分片上都有一个函数去执行/迭代/计算它。它也是一系列的依赖，比如RDD1转换为RDD2，RDD2转换为RDD3，那么RDD2依赖于RDD1，RDD3依赖于RDD2。对于一个Key-Value形式的RDD，可以指定一个partitioner，告诉它如何分片，常用的有hash、range。
+### Spark Streaming
+Streaming是一种数据传送技术，它把客户机收到的数据变成一个稳定连续的流，源源不断的送出，使用户听到的声音或者看到的图像十分平稳，而且用户在整个文件传送完之前就可以开始浏览文件。 
+Spark Streaming是构建在Spark上处理Stream数据的框架，具有可扩展，高吞吐、容错性强的特点，它从数据源（soket、flume、kafka）得到数据，并将流式数据分成很多RDD，根据时间间隔以批次（batch）为单位进行处理，能实现实时统计，累加，和一段时间内的指标的统计。
+- 当运行Spark Streaming 框架时，Application会执行StreamingContext，并且在底层运行的是SparkContext，然后Driver在每个Executor上一直运行一个Receiver来接受数据
+![spark streaming示意图1](http://static.zybuluo.com/vin123456/2gxlc1ffqvjqedp8vxp7nqr9/image_1as49tnf31qq5vet2gu1bs41ivdcs.png)
+- Receiver通过input stream接收数据并将数据分成块（blocks），之后存储在Executor的内存中，blocks会在其他的Executor上进行备份
+![spark streaming示意图1](http://static.zybuluo.com/vin123456/3w52offyj0bajrvia7m4mwra/image_1as4a2m8a18obaub100k1koh1g7nd9.png)
+- Executor将存储的blocks回馈给StreamingContext，当经过一定时间后，StreamingContext将在这一段时间内的blocks，也称为批次（batch）当作RDD来进行处理，并通过SparkContext运行Spark jobs，Spark jobs通过运行tasks在每个Executor上处理存储在内存中的blocks
+![spark streaming示意图1](http://static.zybuluo.com/vin123456/zut3psn48e4oy0trxf1dd73k/image_1as4aa2dt14n25641b50e731ubldm.png)
+- 这个循环每隔一个批次执行一次
+![spark streaming示意图1](http://static.zybuluo.com/vin123456/3pxiemu9zh482xxlha1u5z2n/image_1as4acn181ais15h412il7i2cjbe3.png)
+### 运行模式
+目前最为常用的Spark运行模式有：
+- local：本地线程方式运行，主要用于开发调试Spark应用程序
+- Standalone：利用Spark自带的资源管理与调度器运行Spark集群，采用Master/Slave结构，为解决单点故障，可以采用ZooKeeper实现高可靠（High Availability，HA）
+- Apache Mesos ：运行在著名的Mesos资源管理框架基础之上，该集群运行模式将资源管理交给Mesos，Spark只负责进行任务调度和计算
+- Hadoop YARN : 集群运行在Yarn资源管理器上，资源管理交给Yarn，Spark只负责进行任务调度和计算。这是最为常用的运行模式。
+### 优点
+- 性能：内存计算下，Spark 比 Hadoop 快100倍，且Spark支持交互式计算与各种复杂算法。
+- 易用性：Spark提供了80多个高级运算符。同时Spark的API可以将集群管理和计算任务解耦，使开发者可以专注于计算。
+- 通用性：Spark提供了大量的库，包括SQL、DataFrames、MLlib、GraphX、Spark Streaming，开发者可以在同一个应用程序中组合使用这些库。Spark可以用于各种应用场景，例如SQL查询、文本处理、机器学习等。
+- 支持多种资源管理器：Spark 支持 Hadoop YARN，Apache Mesos，及其自带的独立集群管理器
+### 参考资料
+[百度百科-spark](https://baike.baidu.com/item/SPARK/2229312?fr=aladdin)
+
+[Spark修炼之道（进阶篇）——Spark入门到精通：第四节 Spark编程模型（一)](https://blog.csdn.net/lovehuangjiaju/article/details/48580863)
+
+[Spark基础全解析](https://blog.csdn.net/vinfly_li/article/details/79396821#spark-streaming)
+
  http://www.cnblogs.com/wuxiang/p/5629138.html
+
  https://www.jianshu.com/p/7e5fc624861b
+ 
  https://blog.csdn.net/u013384984/article/details/79415003
 
 
