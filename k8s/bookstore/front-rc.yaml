@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: front-rc
+  labels:
+    name: front-rc
+spec:
+  replicas: 1
+  selector:
+    name: front-pod
+  template:
+    metadata:
+      labels: 
+        name: front-pod
+    spec:
+      containers:
+      - name: front
+        image: veiasai/bookstore-front:v2
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080 
