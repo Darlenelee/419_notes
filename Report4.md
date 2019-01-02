@@ -39,13 +39,46 @@
 
 ### Experiment
 
-- TODO:
+----------
+## 实验背景 ##
+
+ - 测试工具：Jmeter 
+ - 请求规模：设置了100个线程，启动时间1s，10~20次循环，对后端中最常用的查询功能进行了测试。
+ - replica数量：限于集群规模，测试了1~4台replica情况下的表现。
+
+----------
+## 测试结果 ##
+
+replica=1，循环次数=10
+![config](Image/experiment/1-1.png)
+
+replica=2，循环次数=20
+![config](Image/experiment/2.jpg)
+
+replica=3，循环次数=20
+![config](Image/experiment/3.jpg)
+
+replica=4，循环次数=20
+![config](Image/experiment/4.jpg)
+
+
+----------
+
+
+## 测试分析 ##
+#### Throughput（RPS） ####
+
+![config](Image/experiment/chart1.png)
+
+由测试数据可见，在replica数量从1增加为2时RPS的提升极其明显，但直到其数目提升到4，RPS并未出现可见的提升，相反还出现了细微的下降，这可能是由于两台replica已经足以处理测试的请求，而且分发到不同的replica的过程又需要一些时间所导致的。（之所以未继续增大测试规模是由于网速限制故继续增加测试规模已无太大意义）
+
+#### Response Time ####
+
+![config](Image/experiment/chart2.png)
+
+由测试数据可见，Average Response Time也随replica数量增多而出现先迅速下降后缓慢上升的情况，与RPS测试结果相符，但是值得留意的是，replica=3的情况下90%line、95%line、99%line的时间均比replica=2要稍小一些，replica=4也有类似的现象，不确定这是由于测试的随机性导致的还是replica增加时对其有相对更明显的效果。
 
 ## Requirement 5
-
-### Autoscaling
-
-- k8s replica conroller具有auto scalling功能，只需要用kubectl设置一下即可。
 
 ### Monitor
 
@@ -104,7 +137,7 @@
 
 ![config](Image/grafana.png)
 
-### Autoscaling Experiment
+### Autoscaling
 
 - 运行metrics-server服务，将replica controller替换为deployment，设置cpu资源limit，最后创建hpa资源。
 - 程序启动时由于占用了较高cpu资源，会发生一次scale，稳定后将会降回1个pod，然后发起测试请求，观察grafana性能监控曲线。
