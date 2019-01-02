@@ -1,0 +1,13 @@
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: back-hpa
+  labels:
+    name: back-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: ReplicationController
+    name: back-rc
+  minReplicas: 1
+  maxReplicas: 4
