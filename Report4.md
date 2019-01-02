@@ -53,4 +53,59 @@
 
 ### Experiment
 
-- TODO:
+#### Prometheus+Grafana的监控部署
+##### master/node节点环境部署
+
+以下使用的配置文件均位于文件夹k8s-prometheus-grafana中。  
+在master节点按照配置文件进行安装部署，并在node节点通过以下操作下载监控所需镜像。
+
+`docker pull prom/node-exporter`  
+`docker pull prom/prometheus:v2.0.0`  
+`docker pull grafana/grafana:4.2.0`  
+
+采用daemonset方式部署node-exporter组件
+
+`kubectl create -f  node-exporter.yaml` 
+
+##### 部署prometheus组件
+
+* rbac文件
+
+    `kubectl create -f  k8s-prometheus-grafana/prometheus/rbac-setup.yaml`
+
+* 以configmap的形式管理prometheus组件的配置文件
+
+    `kubectl create -f  k8s-prometheus-grafana/prometheus/configmap.yaml`
+
+* Prometheus deployment 文件
+
+    `kubectl create -f  k8s-prometheus-grafana/prometheus/prometheus.deploy.yml`
+
+* Prometheus service文件
+
+    `kubectl create -f  k8s-prometheus-grafana/prometheus/prometheus.svc.yml`
+
+##### 部署grafana组件
+
+* grafana deployment配置文件
+
+    `kubectl create -f   k8s-prometheus-grafana/grafana/grafana-deploy.yaml`
+
+* grafana service配置文件
+
+    `kubectl create -f   k8s-prometheus-grafana/grafana/grafana-svc.yaml`
+
+* grafana ingress配置文件
+
+    `kubectl create -f   k8s-prometheus-grafana/grafana/grafana-ing.yaml`
+
+##### 配置效果
+
+![config](Image/prometheus.png)
+
+##### 运行效果
+
+![config](Image/grafana.png)
+
+##### 参考文件出处
+https://github.com/redhatxl/k8s-prometheus-grafana.git
